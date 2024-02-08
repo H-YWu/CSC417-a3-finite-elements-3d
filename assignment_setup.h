@@ -333,7 +333,8 @@ inline void assignment_setup(int argc, char **argv, Eigen::VectorXd &q, Eigen::V
 {
 
     // load geometric data
-    igl::readMESH("../data/coarser_bunny.mesh", V, T, F);
+    Eigen::MatrixXi tmp_F; // used to avoid resize error of F 
+    igl::readMESH("../data/coarser_bunny.mesh", V, T, tmp_F);
     igl::readOBJ("../data/bunny_skin.obj", V_skin, F_skin);
 
     if (argc > 1)
