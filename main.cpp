@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
     std::thread simulation_thread(simulation_callback);
     simulation_thread.detach();
 
-    //setup libigl viewer and activate 
+    //setup libigl viewer and activate
     Visualize::setup(q, qdot, true);
     Visualize::viewer().callback_post_draw = &draw_callback;
     Visualize::viewer().launch();
