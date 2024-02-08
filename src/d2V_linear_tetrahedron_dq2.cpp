@@ -1,16 +1,24 @@
 #include <d2V_linear_tetrahedron_dq2.h>
 #include <dphi_linear_tetrahedron_dX.h>
-#include <d2psi_neo_hookean_dq2.h>
+#include <d2psi_neo_hookean_dF2.h>
 #include <quadrature_single_point.h>
+#include <matrix_B_tetrahedron.h>
+#include <deformation_gradient.h>
 
 void d2V_linear_tetrahedron_dq2(Eigen::Matrix1212d &H, Eigen::Ref<const Eigen::VectorXd> q, 
                           Eigen::Ref<const Eigen::MatrixXd> V, Eigen::Ref<const Eigen::RowVectorXi> element, double volume,
                           double C, double D) {
 
    auto neohookean_linear_tet = [&](Eigen::Matrix1212d &dV, Eigen::Ref<const Eigen::VectorXd>q, Eigen::Ref<const Eigen::RowVectorXi> element, Eigen::Ref<const Eigen::Vector3d> X) {
-        
       //Code to compute non-integrated hessian matrix goes here
-     
+        Eigen::Matrix3d F;
+        deformation_gradient(F, q, V, element);
+        Eigen::Matrix99d d2psi;
+        d2psi_neo_hookean_dF2(d2psi, F, C, D); 
+        Eigen::SparseMatrixd B;
+        matrix_B_tetrahedron(B, V, element);
+        Eigen::SparseMatrixd BT = B.transpose();
+        dV = BT * d2psi * B;
     };
 
     //integrate the non-integrated hessian across the tetrahedral element
