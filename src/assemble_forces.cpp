@@ -16,10 +16,10 @@ void assemble_forces(Eigen::VectorXd &f, Eigen::Ref<const Eigen::VectorXd> q, Ei
         //   = - \sum (E^T {dV})_r
         //  E^T(3 * idx[i] + j, 3i + j) = 1 for i = 0..3, j = 0..2
         //  dV(x) for x = 0..11
-        //  (E^T dV)(3 * idx[i] + j, 3i + j) += dV(3i + j) for i = 0..3, j = 0..2
+        //  (E^T dV)(3 * idx[i] + j) += dV(3i + j) for i = 0..3, j = 0..2
         for (int i = 0; i < 4; i ++) {
             for (int j = 0; j < 3; j ++) {
-                f(3*element(i)+j, 3*i+j) -= dV(3*i+j);
+                f(3*element(i)+j) -= dV(3*i+j);
             }
         }
     }
