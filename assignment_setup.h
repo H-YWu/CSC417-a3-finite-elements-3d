@@ -178,6 +178,7 @@ inline void assignment_setup(Eigen::VectorXd &q, Eigen::VectorXd &qdot) {
 #include <dV_linear_tetrahedron_dq.h>
 #include <dV_spring_particle_particle_dq.h>
 #include <d2V_linear_tetrahedron_dq2.h>
+#include <d2V_spring_particle_particle_dq2.h>
 #include <mass_matrix_mesh.h>
 #include <assemble_forces.h>
 #include <assemble_stiffness.h>
@@ -218,8 +219,8 @@ Eigen::SparseMatrixd tmp_stiffness;
 
 std::vector<std::pair<Eigen::Vector3d, unsigned int>> spring_points;
 
-bool skinning_on = true;
-bool fully_implicit = false;
+bool skinning_on = false;
+bool fully_implicit = true;
 bool bunny = true;
 
 // selection spring
@@ -235,6 +236,7 @@ inline void simulate(Eigen::VectorXd &q, Eigen::VectorXd &qdot, double dt, doubl
     // Interaction spring
     Eigen::Vector3d mouse;
     Eigen::Vector6d dV_mouse;
+    Eigen::Matrix66d d2V_mouse;
     double k_selected_now = (Visualize::is_mouse_dragging() ? k_selected : 0.);
 
     for (unsigned int pickedi = 0; pickedi < Visualize::picked_vertices().size(); pickedi++)
@@ -282,6 +284,15 @@ inline void simulate(Eigen::VectorXd &q, Eigen::VectorXd &qdot, double dt, doubl
     auto stiffness = [&](Eigen::SparseMatrixd &K, Eigen::Ref<const Eigen::VectorXd> q2, Eigen::Ref<const Eigen::VectorXd> qdot2)
     {
         assemble_stiffness(K, P.transpose() * q2 + x0, P.transpose() * qdot2, V, T, v0, C, D);
+
+        // for (unsigned int pickedi = 0; pickedi < spring_points.size(); pickedi++)
+        // {
+        //     int p1 = spring_points[pickedi].second;
+        //     d2V_spring_particle_particle_dq2(d2V_mouse, spring_points[pickedi].first, (P.transpose() * q2 + x0).segment<3>(p1), 0.0, k_selected_now);
+        //     // for (int b = 0; b < 3; b ++)
+        //     //     K.coeffRef(p1+b,p1+b) -= d2V_mouse(b+3, b+3);
+        // }
+
         K = P * K * P.transpose();
     };
 
@@ -345,14 +356,14 @@ inline void assignment_setup(int argc, char **argv, Eigen::VectorXd &q, Eigen::V
             igl::readOBJ("../data/armadillo.obj", V_skin, F_skin);
 
             bunny = false;
-            fully_implicit = true;
         }
     }
 
     igl::boundary_facets(T, F);
     F = F.rowwise().reverse().eval();
 
-    build_skinning_matrix(N, V, T, V_skin);
+    // build_skinning_matrix(N, V, T, V_skin);
+    N.resize(V_skin.rows(), V.rows());
 
     // setup simulation
     init_state(q, qdot, V);

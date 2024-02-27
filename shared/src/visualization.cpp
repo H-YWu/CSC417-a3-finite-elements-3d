@@ -400,7 +400,7 @@ bool Visualize::plot_phase_space(const char *label, ImVec2 q_bounds, ImVec2 q_do
 
             g_selected_obj = 0;
             g_mouse_dragging = true; 
-            
+            return true;
         }
         
         return false;
@@ -437,7 +437,6 @@ bool Visualize::plot_phase_space(const char *label, ImVec2 q_bounds, ImVec2 q_do
     
         g_mouse_drag_world -= g_mouse_world;
 
-        //std::cout<<"Test: "<<g_mouse_drag_world.transpose()<<"\n";
         igl::unproject(
                 g_mouse_win,
                 g_viewer.core().view,

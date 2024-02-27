@@ -8,7 +8,7 @@ void deformation_gradient(Eigen::Matrix3d &F, Eigen::Ref<const Eigen::VectorXd> 
     Eigen::Matrix34d x;
     for (int i = 0; i < 4; i ++) {
         X[i] = V.row(element(i));
-        x.col(i) = q.segment(element(i)*3 , 3);
+        x.col(i) = q.segment(element(i)*3, 3);
     }
     for (int i = 0; i < 3; i ++) {
         T.col(i) = X[i+1] - X[0];

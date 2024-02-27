@@ -19,6 +19,7 @@ void mass_matrix_linear_tetrahedron(Eigen::Matrix1212d &M, Eigen::Ref<const Eige
     Me(3,1) = 1.0/2.0E+1;
     Me(3,2) = 1.0/2.0E+1;
     Me(3,3) = 1.0/1.0E+1;
+    M.setZero();
     for (int i = 0; i < 4; i ++) {
         for (int j = 0; j < 4; j ++) {
             double e = density * volume * Me(i, j);
@@ -26,5 +27,5 @@ void mass_matrix_linear_tetrahedron(Eigen::Matrix1212d &M, Eigen::Ref<const Eige
                 M(i * 3 + k, j * 3 + k) = e; 
             }
         }
-    }
+    }  
 }

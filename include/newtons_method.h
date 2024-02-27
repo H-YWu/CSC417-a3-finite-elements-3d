@@ -33,7 +33,7 @@ double newtons_method(Eigen::VectorXd &x0, Objective &f, Jacobian &g, Hessian &H
 	*/
 
 	// constants
-	double tol = 1e-4, tol2 = 1e-8, max_alpha = 1.0, p = 0.5, c = 1e-8;
+	double eps = 1e-8, tol2 = 1e-32, max_alpha = 1.0, p = 0.5, c = 1e-8;
 
 	Eigen::VectorXd d;
 	for (int i = 0; i < maxSteps; i ++) {
@@ -56,10 +56,10 @@ double newtons_method(Eigen::VectorXd &x0, Objective &f, Jacobian &g, Hessian &H
 		}
 	    // chosse alpha: backtracking line search
 		double alpha = max_alpha, threshold = f(x0) + c * d.dot(tmp_g);
-		while (true) {
-			if ((f(x0 + alpha * d) <= threshold) ||
-				alpha < tol) break;
+		double E = f(x0 + alpha * d);
+		while (E > threshold && alpha >= eps) {
 			alpha *= p;
+			E = f(x0 + alpha * d);
 		}
 		// update
 		x0 = x0 + alpha * d;

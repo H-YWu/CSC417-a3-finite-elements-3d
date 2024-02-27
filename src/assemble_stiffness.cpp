@@ -21,14 +21,17 @@ void assemble_stiffness(Eigen::SparseMatrixd &K, Eigen::Ref<const Eigen::VectorX
         //  E(3i + j, 3 * idx[i] + j)   = 1 for i = 0..3, j = 0..2
         //  E^T(3 * idx[i] + j, 3i + j) = 1 for i = 0..3, j = 0..2
         //  H(x, y) for x,y = 0..11
-        //  (H E)(x, 3 * idx[i] + j) += H(x, 3i + j) for x = 0..11, i = 0..3, j = 0..2
-        //  (E^T H E)(3 * idx[i] + j, 3 * idx[i] + j) += H(3i + j, 3i + j) for i = 0..3, j = 0..2
-        for (int i = 0; i < 4; i ++) {
-            for (int j = 0; j < 3; j ++) {
-                triples.push_back(Eigen::Triplet<double>(3*element(i)+j, 3*element(i)+j, H(3*i+j,3*i+j)));
+        //  (H E)(x, 3 * idx[i] + j) -= H(x, 3i + j) for x = 0..11, i = 0..3, j = 0..2
+        //  (E^T H E)(3 * idx[I] + J, 3 * idx[i] + j) -= H(3I + J, 3i + j) for I = 0..3, J = 0..2, i = 0..3, j = 0..2
+        for (int I = 0; I < 4; I ++) {
+            for (int J = 0; J < 3; J ++) {
+                for (int i = 0; i < 4; i ++) {
+                    for (int j = 0; j < 3; j ++) {
+                        triples.push_back(Eigen::Triplet<double>(3*element(I)+J, 3*element(i)+j, -H(3*I+J,3*i+j)));
+                    }
+                }
             }
         }
-
     }
     K.setFromTriplets(triples.begin(), triples.end());
 };
