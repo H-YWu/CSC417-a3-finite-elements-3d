@@ -364,12 +364,17 @@ bool Visualize::plot_phase_space(const char *label, ImVec2 q_bounds, ImVec2 q_do
         //update vertex positions
         for(unsigned int ii=0; ii<g_geometry[id].first.rows(); ++ii) {
             g_geometry[g_id[id]].first.row(ii) = pos.segment<3>(3*ii).transpose();
-         }
+        }
 
-        if(g_skinning) 
-            g_viewer.data_list[g_id[id]].V = g_N[id]*g_geometry[g_id[id]].first;
-        else
-            g_viewer.data_list[g_id[id]].V = g_geometry[g_id[id]].first;
+        // auto VV = g_N[id] * g_geometry[g_id[id]].first;
+        g_viewer.data_list[g_id[id]].clear();
+        g_viewer.data_list[g_id[id]].set_mesh(g_N[id] * g_geometry[g_id[id]].first, g_skin[g_id[id]].second);
+        
+        // if(g_skinning) 
+        //     //g_viewer.data_list[g_id[id]].V = g_N[id]*g_geometry[g_id[id]].first;
+        //     g_viewer.data_list[g_id[id]].V = g_geometry[g_id[id]].first;
+        // else
+        //     g_viewer.data_list[g_id[id]].V = g_geometry[g_id[id]].first;
 
          //tell viewer to update
          g_viewer.data_list[g_id[id]].dirty |= igl::opengl::MeshGL::DIRTY_POSITION;
@@ -462,13 +467,14 @@ bool Visualize::plot_phase_space(const char *label, ImVec2 q_bounds, ImVec2 q_do
         if(!skinning) {
             for(unsigned int ii=0; ii<g_geometry.size(); ++ii) {
                 g_viewer.data_list[g_id[ii]].clear();
-                g_viewer.data_list[g_id[ii]].set_mesh(g_geometry[ii].first,g_geometry[ii].second);
+                g_viewer.data_list[g_id[ii]].set_mesh(g_geometry[g_id[ii]].first,g_geometry[g_id[ii]].second);
                 g_viewer.data_list[g_id[ii]].set_colors(g_color[ii]);
             }
         } else {
             for(unsigned int ii=0; ii<g_geometry.size(); ++ii) {
                 g_viewer.data_list[g_id[ii]].clear();
-                g_viewer.data_list[g_id[ii]].set_mesh(g_skin[ii].first,g_skin[ii].second);
+                g_viewer.data_list[g_id[ii]].set_mesh(g_geometry[g_id[ii]].first,g_geometry[g_id[ii]].second);
+                // g_viewer.data_list[g_id[ii]].set_mesh(g_skin[g_id[ii]].first,g_skin[g_id[ii]].second);
                 g_viewer.data_list[g_id[ii]].set_colors(g_color[ii]);
             }
         }

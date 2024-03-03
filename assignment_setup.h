@@ -362,8 +362,7 @@ inline void assignment_setup(int argc, char **argv, Eigen::VectorXd &q, Eigen::V
     igl::boundary_facets(T, F);
     F = F.rowwise().reverse().eval();
 
-    // build_skinning_matrix(N, V, T, V_skin);
-    N.resize(V_skin.rows(), V.rows());
+    build_skinning_matrix(N, V, T, V_skin);
 
     // setup simulation
     init_state(q, qdot, V);
