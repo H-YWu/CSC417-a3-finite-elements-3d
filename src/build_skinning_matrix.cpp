@@ -1,9 +1,8 @@
 #include <build_skinning_matrix.h>
 #include <phi_linear_tetrahedron.h>
 #include <vector>
-#include <iostream>
 
-// Utils -- check if the point X is inside the tet
+// Utils: check if the point X is at the same side with another vertex to the corresponding surface 
 bool same_side_tet(Eigen::Ref<const Eigen::Vector3d> V0,
                    Eigen::Ref<const Eigen::Vector3d> V1,
                    Eigen::Ref<const Eigen::Vector3d> V2,
@@ -18,6 +17,7 @@ bool same_side_tet(Eigen::Ref<const Eigen::Vector3d> V0,
     return false;
 }
 
+// Utils: check if the point X is inside the tet
 bool point_in_tet(Eigen::Ref<const Eigen::Vector3d> V0,
                   Eigen::Ref<const Eigen::Vector3d> V1,
                   Eigen::Ref<const Eigen::Vector3d> V2,
@@ -33,12 +33,12 @@ void build_skinning_matrix(Eigen::SparseMatrixd &N, Eigen::Ref<const Eigen::Matr
                                                    Eigen::Ref<const Eigen::MatrixXd> V_skin) {
     N.resize(V_skin.rows(), V.rows());
     std::vector<Eigen::Triplet<double>> triples;
-    // X_{surface} = N * X
-    //  lx3 = lxn * nx3
-    //  X_{surface}.row(i) = N.row(i) * X
+    // X_{surface} = N * V
+    //  lx3 = lxn x nx3
+    //  X_{surface}.row(i) = N.row(i) * V
     for (int i = 0; i < V_skin.rows(); i ++) {
         Eigen::Vector3d X = V_skin.row(i);
-        // check all tets, find that contains the X
+        // Check all tets to find which one contains the X
         for (int j = 0; j < T.rows(); j ++) {
             Eigen::RowVector4i element = T.row(j);
             Eigen::Vector3d V0 = V.row(element(0));

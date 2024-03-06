@@ -366,9 +366,14 @@ bool Visualize::plot_phase_space(const char *label, ImVec2 q_bounds, ImVec2 q_do
             g_geometry[g_id[id]].first.row(ii) = pos.segment<3>(3*ii).transpose();
         }
 
-        // auto VV = g_N[id] * g_geometry[g_id[id]].first;
-        g_viewer.data_list[g_id[id]].clear();
-        g_viewer.data_list[g_id[id]].set_mesh(g_N[id] * g_geometry[g_id[id]].first, g_skin[g_id[id]].second);
+        if (g_skinning) {
+            g_viewer.data_list[g_id[id]].clear();
+            g_viewer.data_list[g_id[id]].set_mesh(g_N[id] * g_geometry[g_id[id]].first, g_skin[g_id[id]].second);
+        }
+        else {
+            g_viewer.data_list[g_id[id]].clear();
+            g_viewer.data_list[g_id[id]].set_mesh(g_geometry[g_id[id]].first, g_geometry[g_id[id]].second);
+        }
         
         // if(g_skinning) 
         //     //g_viewer.data_list[g_id[id]].V = g_N[id]*g_geometry[g_id[id]].first;
@@ -473,8 +478,7 @@ bool Visualize::plot_phase_space(const char *label, ImVec2 q_bounds, ImVec2 q_do
         } else {
             for(unsigned int ii=0; ii<g_geometry.size(); ++ii) {
                 g_viewer.data_list[g_id[ii]].clear();
-                g_viewer.data_list[g_id[ii]].set_mesh(g_geometry[g_id[ii]].first,g_geometry[g_id[ii]].second);
-                // g_viewer.data_list[g_id[ii]].set_mesh(g_skin[g_id[ii]].first,g_skin[g_id[ii]].second);
+                g_viewer.data_list[g_id[ii]].set_mesh(g_skin[g_id[ii]].first,g_skin[g_id[ii]].second);
                 g_viewer.data_list[g_id[ii]].set_colors(g_color[ii]);
             }
         }
