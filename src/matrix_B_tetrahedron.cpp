@@ -1,4 +1,4 @@
-#include <matrix_BE_tetrahedron.h>
+#include <matrix_B_tetrahedron.h>
 
 void matrix_B_tetrahedron(Eigen::SparseMatrixd &B, Eigen::Ref<const Eigen::MatrixXd> V, Eigen::Ref<const Eigen::RowVectorXi> element) {
     B.resize(9, 12);
